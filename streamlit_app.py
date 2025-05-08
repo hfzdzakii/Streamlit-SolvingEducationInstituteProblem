@@ -1,6 +1,5 @@
 import streamlit as st
 import pickle
-import numpy as np
 
 with open(f"./model/model.pkl", "rb") as f:
     model = pickle.load(f)
@@ -30,7 +29,7 @@ def predict_status(_sem_enrolled, _scholarship_holder, _sem_approved, _sem_credi
     tuition_fees = get_yes_no_question(_tuition_fees)
     gender = get_gender(_gender)
     debt = get_yes_no_question(_debt)
-    data = np.array[[debt, _sem_approved, _sem_evaluations, _sem_credited, 
+    data = [[debt, _sem_approved, _sem_evaluations, _sem_credited, 
                     _sem_enrolled, scholarship_holder, 
                     tuition_fees, gender]]
     prediction = model.predict(data)[0]
@@ -40,44 +39,42 @@ def predict_status(_sem_enrolled, _scholarship_holder, _sem_approved, _sem_credi
     if prediction == 1:
         return f"The student should {status[prediction]}, model confidence is {prediction_proba:.2f}%"
 
-
-
-st.title("Student Status Prediction")
-
 st.markdown("""
-            # 🎒 Student Status Prediction
-            # Dicoding - Solving Educational Institution Problem
-            ## Made by : Muhammad Hafizh Dzaki
-            ## Gihub Repo : [Here](https://github.com/hfzdzakii/Dicoding-SolvingEducationIntsituteProblem)
+            ## 🎒 Student Status Prediction
+            ## Dicoding - Solving Educational Institution Problem
+            ### Made by : Muhammad Hafizh Dzaki
+            ### Gihub Repo : [Here](https://github.com/hfzdzakii/Dicoding-SolvingEducationIntsituteProblem)
             """)
+
+st.markdown("#### Input Variables")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.header("Input Variables")
-    sem_approved = st.number_input(label="Sum of 2nd Semester Curricular Units Approved:",
-                                   value=0, min_value=0, max_value=24)
-    sem_evaluations = st.number_input(label="Sum of 2nd Semester Curricular Units Evalutions:",
-                                      value=0, min_value=0)
-    sem_credited = st.number_input(label="Sum of 2nd Semester Curricular Units Credited:",
-                                   value=0, min_value=0, max_value=24)
     sem_enrolled = st.number_input(label="Sum of 2nd Semester Curricular Units Enrolled:",
                                    value=0, min_value=0, max_value=24)
-    debt = st.radio(label="Having Debt?",
-                    options=["No", "Yes"], index=0)
+    sem_approved = st.number_input(label="Sum of 2nd Semester Curricular Units Approved:",
+                                   value=0, min_value=0, max_value=24)
     scholarship_holder = st.radio(label="Scholarship Holder?",
                                   options=["No", "Yes"], index=0)
     tuition_fees = st.radio(label="Tuition Fees Payed?",
                             options=["No", "Yes"], index=0)
-    gender = st.radio(label="Gender:",
-                      options=["Male", "Female"], index=0)
     
 with col2:
-    st.header("Predict and Result")
-    if st.button("Predict", type="primary"):
-        result = predict_status(sem_enrolled, scholarship_holder,
-                                sem_approved,
-                                sem_credited, tuition_fees,
-                                sem_evaluations, gender, debt)
-        st.text_area("Prediction", value=result, height=100)
+    sem_credited = st.number_input(label="Sum of 2nd Semester Curricular Units Credited:",
+                                   value=0, min_value=0, max_value=24)
+    sem_evaluations = st.number_input(label="Sum of 2nd Semester Curricular Units Evalutions:",
+                                      value=0, min_value=0)
+    gender = st.radio(label="Gender:",
+                      options=["Male", "Female"], index=0)
+    debt = st.radio(label="Having Debt?",
+                    options=["No", "Yes"], index=0)
+
+st.header("Predict and Result")
+if st.button("Predict Student Status", type="primary"):
+    result = predict_status(sem_enrolled, scholarship_holder,
+                            sem_approved,
+                            sem_credited, tuition_fees,
+                            sem_evaluations, gender, debt)
+    st.text_area("Prediction", value=result, height=100)
         
